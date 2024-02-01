@@ -1,0 +1,48 @@
+//SIT315 Programming Paradigms
+//Module1 :Real-time and Embedded Systems
+// TaskM1.T2P:Interrupt-driven Board
+
+const int PirSensor = 2;     // connected PIR sensor signal pin to digital pin 2
+const int LedPin = 3;        // connect LED anode to digital pin 3
+
+volatile int motionDetected = 0;
+
+void setup() {
+  pinMode(PirSensor, INPUT);  // Motion sensor: input
+  pinMode(LedPin, OUTPUT);       // LED: output
+  Serial.begin(9600);            // Initializing the serial communication
+  
+  attachInterrupt(digitalPinToInterrupt(pirSensorPin), motionInterruptHandler, CHANGE);
+}
+
+void loop() {
+  // Main loop can be kept empty or used for other tasks
+  
+  // Handle motion detection in the interrupt service routine
+  if (motionDetected) {
+    digitalWrite(LedPin, HIGH);   // LED turns ON
+    Serial.println("Motion is Detected!!!");
+    delay(500);                    // Adjust the delay as needed
+    digitalWrite(LedPin, LOW);    // LED turns OFF
+    motionDetected = 0;            // Resets flag
+  }
+  
+  // Additional tasks can be performed here
+}
+
+void motionInterruptHandler() {
+  // Interrupt service routine for motion detection
+  int pirSensorValue = digitalRead(PirSensorPin);
+  
+  Serial.print("Motion Sensor Value is: ");
+  Serial.println(pirSensorValue);
+
+  if (pirSensorValue == HIGH) {
+      // Motion observed
+    motionDetected = 1;
+  } else {
+    // When there is no motion, no particular action is taken.
+   motionDetected = 0;
+  }
+}
+
